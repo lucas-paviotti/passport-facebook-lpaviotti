@@ -3,26 +3,28 @@ const { getLogin, postLogin, failedLogin } = require('../controllers/login.contr
 const { UsuarioFacebookModelo } = require('../models/UsuarioFacebook');
 const passport = require('passport');
 const FacebookStrategy = require('passport-facebook').Strategy;
-const { PORT } = require('../config/config');
+const { PORT, FBCLIENTID, FBCLIENTSECRET } = require('../config/config');
 
 const loginRouter = Router();
 
-passport.use('facebook', new FacebookStrategy({
-    clientID: '433665011494042',
-    clientSecret: '07ee327724d96ea2b0e20f66e0d810e3',
-    callbackURL: `https://localhost:${PORT}/login/facebook`
+passport.use(new FacebookStrategy({
+    clientID: FBCLIENTID,
+    clientSecret: FBCLIENTSECRET,
+    callbackURL: `https://localhost:${PORT}/login/facebook/callback`,
+    profileFields: ['id', 'displayName', 'email', 'picture.type(large)']
   },
-  function(accessToken, refreshToken, profile, cb) {
-    console.log(accessToken, refreshToken, profile)
-    UsuarioFacebookModelo.findOrCreate({ facebookId: profile.id }, function (err, user) {
-      return cb(err, user);
+  function(accessToken, refreshToken, profile, done) {
+    UsuarioFacebookModelo.findOrCreate({ facebookId: profile.id }, {email: profile._json.email, displayName: profile._json.name, picture: profile._json.picture.data.url}, function (err, user) {
+        if (err) { return done(err); }
+        return done(err, user);
     });
   }
 ));
 
 loginRouter.get('/', getLogin);
-loginRouter.post('/', passport.authenticate('facebook', {failureRedirect: '/login/failed'}), postLogin);
-loginRouter.get('/facebook', passport.authenticate('facebook', {failureRedirect: '/login/failed'}, postLogin));
+loginRouter.post('/', passport.authenticate('login', {failureRedirect: '/login/failed'}), postLogin);
+loginRouter.get('/facebook', passport.authenticate('facebook', {scope: [ "email" ],}));
+loginRouter.get('/facebook/callback', passport.authenticate('facebook', {successRedirect: '/', failureRedirect: '/login/failed'}));
 loginRouter.get('/failed', failedLogin);
 
 module.exports = {

@@ -265,3 +265,9 @@ a {
     background-color: rgb(109, 127, 218);
     transition: 0.3s;
 }
+
+.user-picture {
+    border-radius: 50%;
+    width: 130px;
+    height: auto;
+}

@@ -1,9 +1,13 @@
 require('dotenv').config()
 
 const { 
-    PORT
+    PORT,
+    FBCLIENTID, 
+    FBCLIENTSECRET
 } = process.env;
 
 module.exports = {
-    PORT
+    PORT,
+    FBCLIENTID, 
+    FBCLIENTSECRET
 }

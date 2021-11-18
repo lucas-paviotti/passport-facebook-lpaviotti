@@ -7,7 +7,6 @@ const getLogin = async (req, res) => {
 }
 
 const postLogin = async (req, res) => {
-    console.log(res)
     res.redirect('/');
 }
 

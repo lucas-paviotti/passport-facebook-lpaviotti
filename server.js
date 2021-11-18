@@ -104,7 +104,7 @@ passport.deserializeUser((id, done) => {
 
 app.get('/', (req, res) => {
     if (req.isAuthenticated()) {
-        res.render('formulario', { nombre: req.user.username });
+        res.render('formulario', { nombre: req.user.displayName, email: req.user.email, picture: req.user.picture });
     } else {
         res.redirect('/login');
     }
