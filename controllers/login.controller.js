@@ -2,11 +2,12 @@ const getLogin = async (req, res) => {
     if (req.isAuthenticated()) {
         res.redirect('/')
     } else {
-        res.render('login');
+        res.render('login-facebook');
     }
 }
 
 const postLogin = async (req, res) => {
+    console.log(res)
     res.redirect('/');
 }
 

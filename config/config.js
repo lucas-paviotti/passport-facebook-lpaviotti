@@ -1,7 +1,7 @@
 require('dotenv').config()
 
 const { 
-    PORT 
+    PORT
 } = process.env;
 
 module.exports = {

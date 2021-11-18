@@ -12,12 +12,19 @@ const { signupRouter } = require('./routes/signup.route');
 
 const { ProductoModelo } = require('./models/Producto');
 const { MensajeModelo } = require('./models/Mensaje');
-const { UsuarioModelo } = require('./models/Usuario');
+const { UsuarioFacebookModelo } = require('./models/UsuarioFacebook');
 
 const {normalize, schema} = require('normalizr');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passport = require('passport');
+const https = require('https');
+const fs = require('fs'); 
+
+const httpsOptions = {
+    key: fs.readFileSync('./sslcert/cert.key'),
+    cert: fs.readFileSync('./sslcert/cert.pem')
+}
 
 const app = express();
 
@@ -47,7 +54,7 @@ app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
 app.use('/signup', signupRouter);
 
-const server = app.listen(PORT, () => {
+const server = https.createServer(httpsOptions, app).listen(PORT, () => {
     console.log(`Servidor http escuchando en el puerto ${server.address().port}`);
 });
 server.on("error", error => console.log(`Error en servidor ${error}`));
@@ -84,63 +91,15 @@ const mensajesSchema = new schema.Entity('mensajes',{
 },{idAttribute: '_id'});
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 passport.serializeUser((user, done) => {
     done(null, user._id);
 });
 
 passport.deserializeUser((id, done) => {
-    UsuarioModelo.findById(id, (err, user) => {
+    UsuarioFacebookModelo.findById(id, (err, user) => {
         done(err, user);
     });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 app.get('/', (req, res) => {
